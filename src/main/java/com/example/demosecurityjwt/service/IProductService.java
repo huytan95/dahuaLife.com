@@ -20,4 +20,6 @@ public interface IProductService {
     Page<Product> getAll(String name, Pageable pageable);
 
     List<Product> getAll();
+
+    List<Product> getAllByCateId(Long id);
 }

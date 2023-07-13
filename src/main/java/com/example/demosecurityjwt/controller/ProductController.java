@@ -59,4 +59,9 @@ public class ProductController {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return ResponseEntity.ok().body(iProductService.getAll(keyword,pageable));
     }
+
+    @GetMapping("product/{cateId}")
+    public ResponseEntity<List<Product>> getProductById(@PathVariable Long cateId){
+        return ResponseEntity.ok().body(iProductService.getAllByCateId(cateId));
+    }
 }

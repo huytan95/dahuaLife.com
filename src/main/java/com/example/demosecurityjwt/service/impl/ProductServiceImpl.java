@@ -1,8 +1,11 @@
 package com.example.demosecurityjwt.service.impl;
 
+import com.example.demosecurityjwt.model.Categories;
 import com.example.demosecurityjwt.model.Product;
 import com.example.demosecurityjwt.repository.IProductRepo;
+import com.example.demosecurityjwt.service.ICategoriesService;
 import com.example.demosecurityjwt.service.IProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -11,12 +14,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
-    private final IProductRepo iProductRepo;
 
-    public ProductServiceImpl(IProductRepo iProductRepo) {
-        this.iProductRepo = iProductRepo;
-    }
+    private final IProductRepo iProductRepo;
+    private final ICategoriesService iCategoriesService;
+
 
     @Override
     public Product saveProduct(Product product){
@@ -65,5 +68,11 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<Product> getAll(){
         return iProductRepo.findAll();
+    }
+
+    @Override
+    public List<Product> getAllByCateId(Long id){
+        Categories categories = iCategoriesService.getById(id);
+        return iProductRepo.findAllByCategories(categories);
     }
 }
