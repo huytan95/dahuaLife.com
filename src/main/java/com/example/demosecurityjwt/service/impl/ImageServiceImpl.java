@@ -1,6 +1,7 @@
 package com.example.demosecurityjwt.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demosecurityjwt.model.Image;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -24,20 +27,27 @@ public class ImageServiceImpl implements IImageService {
 
     @Value("${application.bucket.name}")
     private String bucketName;
-    @Value("${cloud.aws.credentials.access-key}")
-    private String accessKey;
 
     @Override
     public String uploadAndGetUrl(MultipartFile file) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, file.getOriginalFilename(), file.getInputStream(),metadata);
+            metadata.setContentLength(file.getSize());
+            metadata.setContentType(file.getContentType());
+
+            String key = generateFileName(file);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), metadata);
             s3Client.putObject(putObjectRequest);
-            return s3Client.getUrl(bucketName,file.getOriginalFilename()).toString();
+            s3Client.setObjectAcl(bucketName, key, CannedAccessControlList.PublicRead);
+            return s3Client.getUrl(bucketName, key).toString();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String generateFileName(MultipartFile multiPart) {
+        return (new Date().getTime()) + "_" + Objects.requireNonNull(multiPart.getOriginalFilename()).replace(" ", "_");
     }
 
     @Override
