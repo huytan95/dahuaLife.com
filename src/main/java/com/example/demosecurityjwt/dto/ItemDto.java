@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class ItemDto {
     private Long productId;
     private int quantity;
-    private double price;
 }

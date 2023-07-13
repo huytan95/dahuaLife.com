@@ -3,6 +3,8 @@ package com.example.demosecurityjwt.service.impl;
 import com.example.demosecurityjwt.model.Product;
 import com.example.demosecurityjwt.repository.IProductRepo;
 import com.example.demosecurityjwt.service.IProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,6 +54,12 @@ public class ProductServiceImpl implements IProductService {
         } else {
             throw new IllegalArgumentException("Product not found whit id: "+productId);
         }
+    }
+
+    @Override
+    public Page<Product> getAll(String name, Pageable pageable){
+
+        return iProductRepo.findAllByNameContaining(name,pageable);
     }
 
     @Override

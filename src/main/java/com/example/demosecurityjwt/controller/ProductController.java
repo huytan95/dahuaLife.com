@@ -7,6 +7,9 @@ import com.example.demosecurityjwt.service.ICategoriesService;
 import com.example.demosecurityjwt.service.IImageService;
 import com.example.demosecurityjwt.service.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +18,14 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("admin/product")
+@RequestMapping
 public class ProductController {
 
     private final IProductService iProductService;
     private final IImageService iImageService;
     private final ICategoriesService iCategoriesService;
 
-    @PostMapping
+    @PostMapping("admin/product")
     @Transactional
     public ResponseEntity<String> addProduct(@RequestBody Product product,
                                              @RequestParam("imageId") Long imageId,
@@ -44,13 +47,16 @@ public class ProductController {
        return ResponseEntity.ok("success");
     }
 
-    @GetMapping("{id}")
+    @GetMapping("admin/product/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id){
         return ResponseEntity.ok().body(iProductService.getProductById(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProduct(){
-        return ResponseEntity.ok().body(iProductService.getAll());
+    @GetMapping("product")
+    public ResponseEntity<Page<Product>> getAllProduct(@RequestParam("pageNumber") int pageNumber,
+                                                       @RequestParam("pageSize") int pageSize,
+                                                       @RequestParam(value = "keyword", required = false) String keyword){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return ResponseEntity.ok().body(iProductService.getAll(keyword,pageable));
     }
 }
