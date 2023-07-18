@@ -17,4 +17,6 @@ public interface IOrderService {
     List<Orders> getAllOrder();
 
     Orders updateStatus(Long id, String orderStatus);
+
+    List<Orders> getOrderByMonth(int month, int year);
 }

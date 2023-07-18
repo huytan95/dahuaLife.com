@@ -84,4 +84,9 @@ public class OrderServiceImpl implements IOrderService {
             throw new IllegalArgumentException("No constant "+ input);
         }
     }
+
+    @Override
+    public List<Orders> getOrderByMonth(int month, int year){
+        return iOrderRepo.findAllOrdersInMonth(month, year);
+    }
 }

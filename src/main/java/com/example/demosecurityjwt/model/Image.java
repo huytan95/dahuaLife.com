@@ -20,4 +20,8 @@ public class Image {
     @JoinColumn(name = "productId")
     @JsonIgnore
     private Product product;
+    @ManyToOne
+    @JoinColumn(name = "webId")
+    @JsonIgnore
+    private WebInformation webInformation;
 }

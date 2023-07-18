@@ -27,14 +27,18 @@ public class OrderController {
         return ResponseEntity.ok().body(iOrderService.getOrderById(id));
     }
 
-    @GetMapping("admin/order")
-    public ResponseEntity<List<Orders>> getOrders(){
-        return ResponseEntity.ok().body(iOrderService.getAllOrder());
-    }
-
     @PostMapping("admin/order/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id,
                                                @RequestParam("status") String status){
         return ResponseEntity.ok().body(iOrderService.updateStatus(id, status));
+    }
+
+    @GetMapping("admin/order")
+    public ResponseEntity<List<Orders>> getOrderByMonth(@RequestParam(value = "month", required = false) Integer month,
+                                                        @RequestParam(value = "year", required = false) Integer year){
+        if(month == null && year == null){
+            return ResponseEntity.ok().body(iOrderService.getAllOrder());
+        }
+        return ResponseEntity.ok().body(iOrderService.getOrderByMonth(month,year));
     }
 }
