@@ -22,4 +22,9 @@ public class UserServiceImpl implements IUserService {
     public void saveUser(User user){
         iUserRepo.save(user);
     }
+
+    @Override
+    public User getUser(Long id){
+        return iUserRepo.findById(id).orElse(null);
+    }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-    @RequestMapping("admin/web-Information")
+@RequestMapping("admin/web-Information")
 public class WebInforController {
 
     private final WebInforService webInforService;

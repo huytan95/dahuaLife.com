@@ -9,4 +9,6 @@ public interface IUserService {
     boolean existUsername(String username);
 
     void saveUser(User user);
+
+    User getUser(Long id);
 }
