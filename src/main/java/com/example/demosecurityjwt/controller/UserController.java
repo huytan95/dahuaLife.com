@@ -1,5 +1,6 @@
 package com.example.demosecurityjwt.controller;
 
+import com.example.demosecurityjwt.Exception.TokenExpiredException;
 import com.example.demosecurityjwt.dto.LoginRequest;
 import com.example.demosecurityjwt.dto.LoginResponse;
 import com.example.demosecurityjwt.dto.RefreshTokenRequest;
@@ -64,8 +65,13 @@ public class UserController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<Optional<LoginResponse>> refreshToke(@RequestBody RefreshTokenRequest refreshTokenRequest){
+    public ResponseEntity<Optional<?>> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
         String refreshToken = refreshTokenRequest.getRefreshToken();
+        Optional<RefreshToken> optional = iRefreshTokenService.getRefreshToken(refreshToken);
+        if(optional.isEmpty()){
+            String messenger = "Refresh token is not valid";
+            return ResponseEntity.ok().body(Optional.of(messenger));
+        }
         return ResponseEntity.ok().body(iRefreshTokenService.getRefreshToken(refreshToken)
                 .map(iRefreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)

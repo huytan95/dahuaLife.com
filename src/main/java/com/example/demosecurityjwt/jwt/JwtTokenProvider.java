@@ -1,5 +1,6 @@
 package com.example.demosecurityjwt.jwt;
 
+import com.example.demosecurityjwt.Exception.TokenExpiredException;
 import com.example.demosecurityjwt.security.CustomerUserDetail;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
@@ -22,42 +23,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Claims extractAllClaims(String token) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(jwtKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean isTokenExpired(String token) {
-        Claims claims = extractAllClaims(token);
-        if (claims != null) {
-            return claims.getExpiration().before(new Date());
-        }
-        return true;
-    }
-
-    public String refreshToken(String token) {
-        final Claims claims = extractAllClaims(token);
-        final Date createdDate = new Date();
-        Date now = new Date();
-        final Date expirationDate = new Date(now.getTime() + jwtExpiration);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, jwtKey)
-                .compact();
-    }
-
-
-
     public String getUsernameByToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtKey)
                 .parseClaimsJws(token).getBody();
@@ -70,8 +35,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token).getBody();
             return true;
         } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | UnsupportedJwtException e) {
-            e.printStackTrace();
+          throw  new TokenExpiredException("token is not valid");
         }
-        return false;
     }
 }
